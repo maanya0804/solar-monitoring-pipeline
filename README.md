@@ -15,17 +15,17 @@ and place the four CSVs in a `data/` folder. Not included in this repo.
 3. Runs data-quality checks (missing weather, negative power, AC > DC,
    missing time intervals).
 4. Computes efficiency (AC/DC) and average daytime output per inverter.
-5. Flags inverters below the fleet median on efficiency or output, or with
-   daytime zero output.
+5. Flags inverters with low efficiency or low output relative to the fleet median,
+   and reports each inverter's count of daytime zero-output readings.
 
 ## Results (Plant 2: 22 inverters, 67,698 readings, 15 May - 17 Jun 2020)
 - Data quality: 0 negative-power rows, 0 missing weather rows, 18 rows with
   AC > DC (~0.03%), 4,000 missing inverter-timestamp readings (~5.6% of expected).
 - Efficiency (AC/DC, daytime) was nearly uniform across inverters (median 0.979-0.980),
   so the efficiency flag did not trigger.
-- 3 of 22 inverters were flagged as low output (below 80% of the fleet median).
-  The same three had the most daytime zero-output readings (279-318 vs. ~23 for the best).
-  [add what the extra check above showed]
+- 3 of 22 inverters were flagged as low output (below 80% of the fleet median). These three
+  had the highest daytime zero-output counts (279-318 vs. ~23 for the best), though the
+  next inverter (267) was close, so the separation is not sharp.
 
 ## Limitations
 - Thresholds (2 percentage points efficiency, 80% of median output, irradiation > 0.2)
@@ -33,13 +33,15 @@ and place the four CSVs in a `data/` folder. Not included in this repo.
 - Assumes inverters are similar in size; larger or smaller inverters could be
   wrongly flagged.
 - 15-minute data with no inverter temperature, so overheating cannot be detected.
-- Single dataset
+- Single dataset; only Plant 2 was analysed.
 - The efficiency check did not separate inverters in this plant.
 - Output varies continuously across the fleet, so the 80% cut is arbitrary.
 - Zero-output readings were counted as offline without confirming a cause.   
 
 
 ## Run
+```bash
 pip install -r requirements.txt
 python run.py
 python -m pytest -q
+```
